@@ -1,10 +1,16 @@
 #include <Wire.h> // Добавление библиотеки для работы с УЗ датчиком по I2C
 
 
-int UltrasonikRead() { // Функция считывания УЗ датчика расстояния
-  Wire.requestFrom(56, 1); // Запрашиваем данные с датчика
-  int S = Wire.read(); // Получаем дальность с датчика расстояния в сантиметрах
-  delay(50);
+int UltrasonikRead() {
+  
+  Wire.requestFrom(56, 1);
+  unsigned long startTime = millis();
+  while (Wire.available() == 0) {
+    if (millis() - startTime > 100) { // Таймаут 100 мс
+      return -1; // Возвращаем ошибку
+    }
+  }
+  int S = Wire.read();
   return S;
 }
 
